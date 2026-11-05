@@ -6,7 +6,7 @@ import {
 import {
   AlertCircle, CheckCircle2, CircleCheck, Clock3, Filter,
   LayoutDashboard, ListTodo, LoaderCircle, Plus, Search,
-  TrendingUp, UsersRound, X,
+  TrendingUp, UserPlus, X,
 } from 'lucide-react'
 import { supabase } from './supabase'
 import {
@@ -358,9 +358,10 @@ export default function App() {
           </div>
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => { setTeamError(''); setTeamModalOpen(true) }}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-emerald-600">
-              <UsersRound size={17} /> Team
-              <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs tabular-nums">{members.length}</span>
+              aria-label={`Add or manage teammates (${members.length} added)`}
+              className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-3.5 py-3 text-sm font-semibold text-emerald-800 shadow-sm transition-colors hover:border-emerald-400 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-emerald-600 sm:px-4">
+              <UserPlus size={18} aria-hidden="true" /> Add teammates
+              <span aria-hidden="true" className="rounded-md bg-emerald-50 px-1.5 py-0.5 text-xs tabular-nums text-emerald-800">{members.length}</span>
             </button>
             <button type="button" onClick={() => openCreate()} disabled={saving}
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-emerald-800 disabled:opacity-50">
