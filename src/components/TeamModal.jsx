@@ -1,16 +1,18 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Trash2, UserPlus, X } from 'lucide-react'
 import { memberColors, fieldClass } from '../taskUtils'
 import { Avatar } from './TaskCard'
+import ConfirmDialog from './ConfirmDialog'
 
 export default function TeamModal({ members, tasks, name, setName, color, setColor, saving, onSubmit, onDelete, onClose, error }) {
+  const [memberToDelete, setMemberToDelete] = useState(null)
   useEffect(() => {
     function onEscape(event) {
-      if (event.key === 'Escape' && !saving) onClose()
+      if (event.key === 'Escape' && !saving && !memberToDelete) onClose()
     }
     window.addEventListener('keydown', onEscape)
     return () => window.removeEventListener('keydown', onEscape)
-  }, [saving, onClose])
+  }, [saving, memberToDelete, onClose])
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-[2px]" onMouseDown={event => { if (event.target === event.currentTarget && !saving) onClose() }}>
@@ -26,11 +28,20 @@ export default function TeamModal({ members, tasks, name, setName, color, setCol
           {members.length ? members.map(member => {
             const used = tasks.some(task => (task.assignee_ids || []).includes(member.id))
             return (
-              <div key={member.id} className="flex items-center gap-3 rounded-xl border border-slate-100 px-3 py-2.5"><Avatar member={member} /><span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-700">{member.name}</span><button type="button" title={used ? 'Unassign this teammate from tasks before deleting' : 'Delete teammate'} disabled={used || saving} onClick={() => onDelete(member)} className="rounded-lg p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-30" aria-label={`Delete ${member.name}`}><Trash2 size={16} /></button></div>
+              <div key={member.id} className="flex items-center gap-3 rounded-xl border border-slate-100 px-3 py-2.5"><Avatar member={member} /><span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-700">{member.name}</span><button type="button" title={used ? 'Unassign this teammate from tasks before deleting' : 'Delete teammate'} disabled={used || saving} onClick={() => setMemberToDelete(member)} className="rounded-lg p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-30" aria-label={`Delete ${member.name}`}><Trash2 size={16} /></button></div>
             )
           }) : <p className="py-6 text-center text-sm text-slate-400">No teammates added yet.</p>}
         </div>
       </div>
+      {memberToDelete && (
+        <ConfirmDialog
+          title="Remove teammate?"
+          description={<>Remove <strong>{memberToDelete.name}</strong> from your team? You can add them again later.</>}
+          confirmLabel="Remove teammate"
+          onCancel={() => setMemberToDelete(null)}
+          onConfirm={() => onDelete(memberToDelete)}
+        />
+      )}
     </div>
   )
 }

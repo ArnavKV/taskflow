@@ -209,8 +209,7 @@ export default function App() {
   }
 
   async function handleDelete() {
-    if (!editingId || !user || saving) return
-    if (!window.confirm('Delete this task permanently, including its comments and activity?')) return
+    if (!editingId || !user || saving) throw new Error('Please wait for the current save to finish.')
     setSaving(true)
     setError('')
     try {
@@ -222,6 +221,7 @@ export default function App() {
       setTaskModalOpen(false)
     } catch (err) {
       setError(`Could not delete task: ${err.message || 'Unknown error'}`)
+      throw err
     } finally {
       setSaving(false)
     }
@@ -291,12 +291,10 @@ export default function App() {
   }
 
   async function deleteTeamMember(member) {
-    if (!user || saving) return
+    if (!user || saving) throw new Error('Please wait for the current save to finish.')
     if (tasks.some(task => (task.assignee_ids || []).includes(member.id))) {
-      setTeamError('Unassign this teammate from tasks before removing them.')
-      return
+      throw new Error('Unassign this teammate from tasks before removing them.')
     }
-    if (!window.confirm(`Remove ${member.name} from your team?`)) return
     setSaving(true)
     setTeamError('')
     try {
@@ -306,6 +304,7 @@ export default function App() {
       setMembers(previous => previous.filter(item => item.id !== member.id))
     } catch (err) {
       setTeamError(err.message || 'Could not delete teammate.')
+      throw err
     } finally {
       setSaving(false)
     }

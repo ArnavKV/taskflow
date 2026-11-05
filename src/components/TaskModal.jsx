@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Activity, Check, CircleAlert, Cloud, LoaderCircle, MessageSquare, Pencil, Send, Trash2, X } from 'lucide-react'
 import { columns, fieldClass, niceTime, priorityOptions } from '../taskUtils'
 import { Avatar } from './TaskCard'
+import ConfirmDialog from './ConfirmDialog'
 
 export default function TaskModal({
   form, setForm, editing, saving, onClose, onSubmit, onAutoSave, onDelete,
@@ -11,6 +12,7 @@ export default function TaskModal({
   const [newLabel, setNewLabel] = useState('')
   const [saveStatus, setSaveStatus] = useState('saved')
   const [saveError, setSaveError] = useState('')
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   // A snapshot of the last confirmed database state, separate from the editable form.
   const savedSnapshot = useRef(JSON.stringify(form))
@@ -77,21 +79,21 @@ export default function TaskModal({
   useEffect(() => () => window.clearTimeout(debounceTimer.current), [])
 
   const requestClose = useCallback(async () => {
-    if (commentSaving) return
+    if (commentSaving || confirmDelete) return
     if (editing && !(await flushChanges())) return
     onClose()
-  }, [commentSaving, editing, flushChanges, onClose])
+  }, [commentSaving, confirmDelete, editing, flushChanges, onClose])
 
   useEffect(() => {
     function onEscape(event) {
-      if (event.key === 'Escape' && !commentSaving) {
+      if (event.key === 'Escape' && !commentSaving && !confirmDelete) {
         event.preventDefault()
         void requestClose()
       }
     }
     window.addEventListener('keydown', onEscape)
     return () => window.removeEventListener('keydown', onEscape)
-  }, [commentSaving, requestClose])
+  }, [commentSaving, confirmDelete, requestClose])
 
   const update = (field, value) => setForm(current => ({ ...current, [field]: value }))
   const addLabel = () => {
@@ -158,7 +160,7 @@ export default function TaskModal({
               ) : <p className="text-xs text-slate-500">No team members yet. Use the Team button on the board to add some.</p>}
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
-              <div>{editing && <button type="button" disabled={saving} onClick={onDelete} className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50"><Trash2 size={16} />Delete</button>}</div>
+              <div>{editing && <button type="button" disabled={saving} onClick={() => setConfirmDelete(true)} className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50"><Trash2 size={16} />Delete</button>}</div>
               <div className="flex gap-2">
                 {editing ? (
                   <button type="button" onClick={() => void requestClose()} disabled={commentSaving} className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 disabled:opacity-50">
@@ -199,6 +201,19 @@ export default function TaskModal({
           </div>
         )}
       </div>
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete this task?"
+          description={<>"{form.title}" and its comments and activity history will be permanently deleted. This cannot be undone.</>}
+          confirmLabel="Delete task"
+          onCancel={() => setConfirmDelete(false)}
+          onConfirm={async () => {
+            // Wait for any in-progress auto-save before deleting the row.
+            if (!(await flushChanges())) throw new Error('Could not finish saving changes. Cancel and review the editor before retrying.')
+            await onDelete()
+          }}
+        />
+      )}
     </div>
   )
 }
