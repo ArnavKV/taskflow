@@ -1,6 +1,6 @@
 # TaskFlow
 
-A soccer-inspired Kanban task board built with React, Vite, Tailwind CSS, Supabase, and dnd-kit. The interface uses a navy-and-emerald design and organizes work across **To Do**, **In Progress**, **In Review**, and **Done**.
+A Kanban task board built with React, Vite, Tailwind CSS, Supabase, and dnd-kit. Its restrained navy-and-emerald palette takes cues from sports dashboards without changing the usual task-management workflow across **To Do**, **In Progress**, **In Review**, and **Done**.
 
 **Live app:** https://taskflow-infinity.vercel.app/  
 **Source:** https://github.com/ArnavKV/taskflow
@@ -12,7 +12,7 @@ A soccer-inspired Kanban task board built with React, Vite, Tailwind CSS, Supaba
 - Create a guest-managed teammate roster and assign multiple members to tasks.
 - Add task comments and review task activity history.
 - Search task titles/descriptions and filter by priority, label, or teammate.
-- See task counts and due date / overdue indicators.
+- See task counts, an overall completion rate, and due date / overdue indicators.
 - Use the app without registering, through Supabase anonymous sign-in.
 - Row Level Security restricts each guest to their own task data.
 
@@ -34,8 +34,6 @@ A soccer-inspired Kanban task board built with React, Vite, Tailwind CSS, Supaba
    npm install
    ```
 
-   If the repository is private, GitHub authentication and access are required to clone it.
-
 3. Create `.env.local` in the repository root:
 
    ```dotenv
@@ -52,6 +50,20 @@ A soccer-inspired Kanban task board built with React, Vite, Tailwind CSS, Supaba
    ```
 
 7. Open the local URL shown by Vite (usually `http://localhost:5173`).
+
+## Code structure
+
+- `src/App.jsx` handles workspace state and Supabase data operations.
+- `src/components/BoardColumn.jsx` and `TaskCard.jsx` render the board and draggable cards.
+- `src/components/TaskModal.jsx` and `TeamModal.jsx` handle task/team forms.
+- `src/taskUtils.js` contains date formatting, display constants and task filtering.
+- `tests/taskUtils.test.mjs` tests core date and filter logic.
+
+Run the utility tests with:
+
+```bash
+node --test tests/taskUtils.test.mjs
+```
 
 ## Production build
 
@@ -72,7 +84,7 @@ Deploy the Vite project on Vercel with build command `npm run build`, output fol
 
 ## Manual acceptance checks
 
-- Create a task, edit its details, drag it to another column, and refresh.
+- Create a task, edit its details, drag it to another column, and refresh. Check the column-level Add button.
 - Create a teammate, assign them, and verify persistence after refresh.
 - Post a comment and check the activity log.
 - Confirm filters work and overdue indicators appear as expected.
@@ -85,4 +97,3 @@ Deploy the Vite project on Vercel with build command `npm run build`, output fol
 - Normalize multi-assignee relationships and custom labels into join tables.
 - Add keyboard-accessible drag alternatives, automated integration tests, and real-time collaboration.
 - Support task ordering within columns and more advanced board permissions.
-
