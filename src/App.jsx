@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  DndContext, DragOverlay, PointerSensor, TouchSensor,
+  DndContext, DragOverlay, MouseSensor, TouchSensor,
   useSensor, useSensors,
 } from '@dnd-kit/core'
 import {
@@ -60,8 +60,8 @@ export default function App() {
   const [teamError, setTeamError] = useState('')
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 8 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 10 } }),
   )
 
   useEffect(() => {
@@ -489,7 +489,7 @@ export default function App() {
           members={members} tab={tab} setTab={setTab} commentText={commentText}
           setCommentText={setCommentText} comments={comments} activity={activity}
           detailLoading={detailLoading} detailError={detailError} commentSaving={commentSaving}
-          onComment={handleComment}
+          onComment={handleComment} createError={error}
         />
       )}
       {teamModalOpen && (

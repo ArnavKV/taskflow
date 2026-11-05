@@ -32,7 +32,7 @@ export const blankForm = {
 }
 
 export const fieldClass =
-  'w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100'
+  'w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-base sm:text-sm text-slate-800 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100'
 
 export function todayLocalISO(now = new Date()) {
   const year = now.getFullYear()

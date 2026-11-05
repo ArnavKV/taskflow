@@ -28,7 +28,7 @@ export default function TaskCard({ task, members, onEdit, disabled = false, over
       ref={overlay ? undefined : setNodeRef}
       {...(!overlay ? attributes : {})}
       {...(!overlay ? listeners : {})}
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: 'pan-y' }}
       className={`group relative rounded-xl border border-slate-200 bg-white p-4 shadow-[0_2px_7px_rgba(15,35,50,0.05)] transition-[box-shadow,transform,opacity] duration-150 ${
         overlay ? 'shadow-2xl ring-2 ring-emerald-400' : 'cursor-grab hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_10px_24px_rgba(15,35,50,0.10)] active:cursor-grabbing'
       } ${isDragging ? 'opacity-30' : ''} ${disabled ? 'opacity-60' : ''}`}
