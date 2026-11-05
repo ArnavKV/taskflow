@@ -86,6 +86,3 @@ Deploy the Vite project on Vercel with build command `npm run build`, output fol
 - Add keyboard-accessible drag alternatives, automated integration tests, and real-time collaboration.
 - Support task ordering within columns and more advanced board permissions.
 
-## Assessment note
-
-This project was created for the Next Play Games software development assessment. The assessment document and final submission link should not be publicly reposted. Follow the designated submission instructions for sharing the final assessment document.
